@@ -22,7 +22,7 @@ jobs:
       - name: Read version from package.json (safe write to GITHUB_ENV and set output)
         id: get_version
         run: |
-          node -e "const fs=require('fs'); const v=require('./package.json').version; fs.appendFileSync(process.env.GITHUB_ENV, `VERSION=${v}\n`); if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${v}\n`); console.log('Package version:', v);"
+          node -e "const fs=require('fs'); const v=require('./package.json').version; if (process.env.GITHUB_ENV) fs.appendFileSync(process.env.GITHUB_ENV, `VERSION=${v}\n`); if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${v}\n`); console.log('Package version:', v);"
 
       - name: Create tag if missing and push
         env:
