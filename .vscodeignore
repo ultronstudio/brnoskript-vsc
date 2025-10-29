@@ -1,20 +1,23 @@
-# vyhoď dev věci a CI
-.git/
-.github/
-.vscode/
-scripts/
-test/
-tests/
+# Vyhoď VCS/CI a dev věci
+.git/**
+.github/**
+.vscode/**
+scripts/**
+test/**
+tests/**
+
+# Mapy, TS zdrojáky (pokud bys je měl)
 **/*.map
 **/*.ts
 **/*.tsx
-**/*.md
-!.*/
 
-# node_modules – VSCE si umí přibalit potřebné prod deps samo
+# Balíčky a archivy
+**/*.zip
+**/*.vsix
+
+# Node modules (většinou nechceš přibalovat)
 node_modules/**
 !node_modules/vscode-languageclient/**
 
-# cokoliv velkého/zbytečného
-**/*.zip
-**/*.vsix
+# Dotfiles obecně
+.*/**
