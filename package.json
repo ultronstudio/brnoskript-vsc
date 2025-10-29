@@ -1,0 +1,58 @@
+{
+  "name": "brnoskript",
+  "displayName": "BrnoSkript",
+  "description": "Syntax highlighting pro jazyk BrnoSkript (přípona .brno).",
+  "author": {
+    "name": "Petr Vurm",
+    "url": "https://petrvurm.cz"
+  },
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "icon": "./icon.png",
+  "scripts": {
+    "package": "vsce package"
+  },
+  "main": "./extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "brnoskript",
+        "aliases": [
+          "BrnoSkript",
+          "brnoskript",
+          "brno",
+          "Brno"
+        ],
+        "extensions": [
+          ".brno"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "dark": "./icons/brno.svg",
+          "light": "./icons/brno.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "brnoskript",
+        "scopeName": "source.brnoskript",
+        "path": "./syntaxes/brnoskript.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "brnoskript",
+        "path": "./snippets/brnoskript.code-snippets"
+      }
+    ]
+  },
+  "dependencies": {
+    "vsce": "^2.15.0"
+  }
+}
