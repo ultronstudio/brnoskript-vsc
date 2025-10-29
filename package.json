@@ -6,7 +6,8 @@
     "name": "Petr Vurm",
     "url": "https://petrvurm.cz"
   },
-  "version": "1.0.3",
+  "publisher": "ultronstudio",
+  "version": "1.0.4",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -18,7 +19,8 @@
     "onLanguage:brnoskript"
   ],
   "scripts": {
-    "package": "vsce package"
+    "package": "npx @vscode/vsce package",
+    "publish": "npx @vscode/vsce publish"
   },
   "main": "./extension.js",
   "contributes": {
