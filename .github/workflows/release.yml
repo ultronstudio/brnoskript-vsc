@@ -14,10 +14,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20.18.1'
+          check-latest: true
+          cache: 'npm'
 
       - name: Read version from package.json (script)
         id: get_version
@@ -48,10 +50,20 @@ jobs:
           script: |
             const tag = `v${process.env.VERSION}`;
             try {
-              await github.rest.repos.getReleaseByTag({ owner: context.repo.owner, repo: context.repo.repo, tag });
+              const rel = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag
+              });
               core.setOutput('exists', 'true');
+              core.setOutput('upload_url', rel.data.upload_url);
+              core.setOutput('release_id', rel.data.id.toString());
             } catch (e) {
-              if (e.status === 404) core.setOutput('exists', 'false'); else throw e;
+              if (e.status === 404) {
+                core.setOutput('exists', 'false');
+              } else {
+                throw e;
+              }
             }
 
       - name: Create GitHub Release
@@ -69,25 +81,32 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Release already exists notice
-        if: steps.check_release.outputs.exists == 'true'
-        run: echo "Release for v${{ steps.get_version.outputs.version }} already exists — skipping creation."
-
-      # === NOVÝ KROK: vytvoření a nahrání VSIX ===
-      - name: Build VSIX package
+      - name: Determine upload URL
+        id: resolve_upload_url
         run: |
-          npm ci
-          npx vsce package
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.SECRET_TOKEN }}
+          if [ "${{ steps.check_release.outputs.exists }}" = "true" ]; then
+            echo "upload_url=${{ steps.check_release.outputs.upload_url }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "upload_url=${{ steps.create_release.outputs.upload_url }}" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Upload VSIX to release
-        if: steps.check_release.outputs.exists == 'false'
+      # === Build VSIX with modern toolchain ===
+      - name: Install deps
+        run: npm ci
+
+      - name: Package extension (.vsix)
+        run: |
+          npm i -D @vscode/vsce@latest
+          npx @vscode/vsce package
+        # Pokud balíš monorepo, zvaž VSIX_PACKAGE_PATH env nebo --out ./dist
+
+      # === Upload .vsix to the release (works for new or existing release) ===
+      - name: Upload VSIX asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.resolve_upload_url.outputs.upload_url }}
           asset_path: ./*.vsix
           asset_name: ${{ github.event.repository.name }}-${{ steps.get_version.outputs.version }}.vsix
           asset_content_type: application/octet-stream
