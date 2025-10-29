@@ -19,15 +19,14 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Read version from package.json
+      - name: Read version from package.json (safe write to GITHUB_ENV and set output)
         id: get_version
         run: |
-          echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
-          echo "Package version: $VERSION"
+          node -e "const fs=require('fs'); const v=require('./package.json').version; fs.appendFileSync(process.env.GITHUB_ENV, `VERSION=${v}\n`); if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${v}\n`); console.log('Package version:', v);"
 
       - name: Create tag if missing and push
         env:
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ steps.get_version.outputs.version }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -45,7 +44,7 @@ jobs:
         id: check_release
         uses: actions/github-script@v6
         env:
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ steps.get_version.outputs.version }}
         with:
           script: |
             const tag = `v${process.env.VERSION}`;
@@ -60,14 +59,14 @@ jobs:
         if: steps.check_release.outputs.exists == 'false'
         uses: actions/create-release@v1
         with:
-          tag_name: v${{ env.VERSION }}
-          release_name: v${{ env.VERSION }}
+          tag_name: v${{ steps.get_version.outputs.version }}
+          release_name: v${{ steps.get_version.outputs.version }}
           body: |
-            Release v${{ env.VERSION }}
+            Release v${{ steps.get_version.outputs.version }}
             Generated automatically from package.json version.
           draft: false
           prerelease: false
 
       - name: Release already exists notice
         if: steps.check_release.outputs.exists == 'true'
-        run: echo "Release for v${{ env.VERSION }} already exists — skipping creation."
+        run: echo "Release for v${{ steps.get_version.outputs.version }} already exists — skipping creation."
