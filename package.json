@@ -1,7 +1,7 @@
 {
-  "name": "brnoskript",
-  "displayName": "BrnoSkript",
-  "description": "Syntax highlighting pro jazyk BrnoSkript (přípona .brno).",
+  "name": "brnoskript-vsc",
+  "displayName": "Podpora pro BrnoSkript",
+  "description": "Zvýraznění syntaxe, úryvky kódu a konfigurace jazyka pro BrnoSkript ve Visual Studio Code.",
   "author": {
     "name": "Petr Vurm",
     "url": "https://petrvurm.cz"
@@ -14,6 +14,9 @@
     "Programming Languages"
   ],
   "icon": "./icon.png",
+  "activationEvents": [
+    "onLanguage:brnoskript"
+  ],
   "scripts": {
     "package": "vsce package"
   },
@@ -54,5 +57,9 @@
   },
   "dependencies": {
     "vsce": "^2.15.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ultronstudio/brnoskript-vsc"
   }
 }
