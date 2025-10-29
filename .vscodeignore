@@ -1,4 +1,19 @@
-node_modules
-.vscode
-**/*.ts
+# vyhoď dev věci a CI
+.github/**
+.vscode/**
+scripts/**
+test/**
+tests/**
 **/*.map
+**/*.ts
+**/*.tsx
+**/*.md
+!.*/
+
+# node_modules – VSCE si umí přibalit potřebné prod deps samo
+node_modules/**
+!node_modules/vscode-languageclient/**
+
+# cokoliv velkého/zbytečného
+**/*.zip
+**/*.vsix
