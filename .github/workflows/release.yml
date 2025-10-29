@@ -107,6 +107,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
         with:
           upload_url: ${{ steps.resolve_upload_url.outputs.upload_url }}
-          asset_path: ./*.vsix
+          asset_path: ${{ github.workspace }}/${{ github.event.repository.name }}-${{ steps.get_version.outputs.version }}.vsix
           asset_name: ${{ github.event.repository.name }}-${{ steps.get_version.outputs.version }}.vsix
           asset_content_type: application/octet-stream
