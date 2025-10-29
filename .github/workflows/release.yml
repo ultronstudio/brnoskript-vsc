@@ -19,10 +19,9 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Read version from package.json (safe write to GITHUB_ENV and set output)
+      - name: Read version from package.json (script)
         id: get_version
-        run: |
-          node -e "const fs=require('fs'); const v=require('./package.json').version; if (process.env.GITHUB_ENV) fs.appendFileSync(process.env.GITHUB_ENV, `VERSION=${v}\n`); if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${v}\n`); console.log('Package version:', v);"
+        run: node scripts/get-version.js
 
       - name: Create tag if missing and push
         env:
