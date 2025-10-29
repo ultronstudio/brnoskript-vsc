@@ -13,7 +13,7 @@
   "categories": [
     "Programming Languages"
   ],
-  "icon": "./icon.png",
+  "icon": "icon.png",
   "activationEvents": [
     "onLanguage:brnoskript"
   ],
@@ -36,8 +36,8 @@
         ],
         "configuration": "./language-configuration.json",
         "icon": {
-          "dark": "./icons/brno.svg",
-          "light": "./icons/brno.svg"
+          "dark": "icons/brno.svg",
+          "light": "icons/brno.svg"
         }
       }
     ],
