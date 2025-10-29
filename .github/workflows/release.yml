@@ -56,6 +56,7 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.check_release.outputs.exists == 'false'
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
@@ -71,3 +72,22 @@ jobs:
       - name: Release already exists notice
         if: steps.check_release.outputs.exists == 'true'
         run: echo "Release for v${{ steps.get_version.outputs.version }} already exists — skipping creation."
+
+      # === NOVÝ KROK: vytvoření a nahrání VSIX ===
+      - name: Build VSIX package
+        run: |
+          npm ci
+          npx vsce package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.SECRET_TOKEN }}
+
+      - name: Upload VSIX to release
+        if: steps.check_release.outputs.exists == 'false'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.SECRET_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./*.vsix
+          asset_name: ${{ github.event.repository.name }}-${{ steps.get_version.outputs.version }}.vsix
+          asset_content_type: application/octet-stream
