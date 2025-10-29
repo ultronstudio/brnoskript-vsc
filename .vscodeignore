@@ -1,9 +1,10 @@
 # vyhoď dev věci a CI
-.github/**
-.vscode/**
-scripts/**
-test/**
-tests/**
+.git/
+.github/
+.vscode/
+scripts/
+test/
+tests/
 **/*.map
 **/*.ts
 **/*.tsx
